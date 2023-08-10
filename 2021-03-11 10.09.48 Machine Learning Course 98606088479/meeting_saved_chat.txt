@@ -1,297 +1,0 @@
-10:07:49 From  Shobhashree Nagireddy  to  Everyone : yes
-10:14:20 From  Martin Wutke  to  Everyone : myTraining = read.table("forestTypeTraining.csv", header = TRUE, sep =",")myTesting = read.table("forestTypeTesting.csv", header = TRUE, sep =",")
-10:16:15 From  Martin Wutke  to  Everyone : forestTuned = tune(svm, train.x = myTraining[,-1], train.y = as.factor(myTraining$class),                    kernel = "radial", ranges = list(cost=seq(1,10,0.2), gamma = 0:10))
-10:19:13 From  Asmita Shrestha  to  Everyone : best performance: 0.4536842
-10:19:16 From  Asmita Shrestha  to  Everyone : what does this mean
-10:19:59 From  Md Rasheduzzaman  to  Everyone : Why we use list for ranges argument?
-10:23:16 From  Martin Wutke  to  Everyone : SVMTuned = svm(as.factor(class)~.,myTraining, cost = forestTuned$best.parameters$cost,                gamma = forestTuned$best.parameters$gamma)
-10:23:45 From  Martin Wutke  to  Everyone : myPred2 = predict(SVMTuned,myTesting)confTable2 = table(myPred2,myTesting$class)confTable
-10:24:36 From  Martin Wutke  to  Everyone : #######################
-10:24:36 From  Martin Wutke  to  Everyone : tp=confTable2[1,1]+confTable2[2,2]+confTable2[3,3]+confTable2[4,4] # alternatively: sum(diag(confTable2))sumAll=sum(confTable2)predictionPerf=tp/sumAll
-10:26:25 From  Martin Wutke  to  Everyone : ###################
-10:26:26 From  Martin Wutke  to  Everyone : dtForest =tree(as.factor(class)~., myTraining)
-10:26:35 From  Martin Wutke  to  Everyone : summary(dtForest)
-10:27:59 From  Martin Wutke  to  Everyone : dtForestplot(dtForest, type = "uniform") #type = "uniform" so that all branches are of the same lengthtext(dtForest)
-10:29:21 From  Martin Wutke  to  Everyone : ###########
-10:29:21 From  Martin Wutke  to  Everyone : myPred = predict(dtForest, myTesting, type = "vector") ### Predictions as class probabilitiesmyPredmyPred = predict(dtForest, myTesting, type = "class") ### Predictions as classesmyPred
-10:30:11 From  Martin Wutke  to  Everyone : #########
-10:30:11 From  Martin Wutke  to  Everyone : tpDT = confTable[1,1]+confTable[2,2]+confTable[3,3]+confTable[4,4]sumAllDT = sum(confTable)predictionPerfDT= tpDT/ sumAllDTpredictionPerfDT
-10:43:08 From  Heiko Kromminga  to  Everyone : +
-10:43:09 From  Dámilólá Adekale  to  Everyone : Yes
-10:43:11 From  Jonathan Heil  to  Everyone : done
-10:43:14 From  Martin Wutke  to  Everyone : #############
-10:43:15 From  Martin Wutke  to  Everyone : myTraining = read.table("forestTypeTrainingExtended.csv", header = TRUE, sep =",")myTest = read.table("forestTypeTestingExtended.csv", header = TRUE, sep =",")plot(myTraining$classValue, col = myTraining$class)
-10:43:16 From  Johanna Sophie Schlüter  to  Everyone : yes
-10:44:55 From  Martin Wutke  to  Everyone : myTraining$class = as.factor(myTraining$class)myTest$class = as.factor(myTest$class)
-10:45:47 From  mehmet  to  Everyone : ggplot(data=myTraining, aes(x=seq_along(classValue), y=classValue))+geom_point(aes(color=class))
-
-
-10:48:18 From  Martin Wutke  to  Everyone : dtForest = tree(classValue~., myTraining[,-1])summary(dtForest) 
-10:51:39 From  Martin Wutke  to  Everyone : myPred = predict(myForest, myTest, type = "vector")
-10:56:31 From  Martin Wutke  to  Everyone : #############
-10:56:33 From  Martin Wutke  to  Everyone : myPred = predict(myForest, myTest[,-1], type = "vector")cor(myPred, myTest$classValue, method = "spearman")
-11:00:43 From  Selina Pusch  to  Everyone : Which values are used to calculate the mean? The last nodes ones (so in the very left side node 3 would be the mean of the "pred_minus_obs_H_b3" from all 23 plants?)
-11:02:22 From  Martin Wutke  to  Everyone : it is the mean of the dependent variable which is calculated
-11:02:42 From  Selina Pusch  to  Everyone : Ooh ok thank you! I got confused there
-11:06:22 From  Carina Meyenberg  to  Everyone : Do we know on which method the classification is done (Gini, Chi-Square..)? Is there a Default Setting for this?
-11:07:26 From  Martin Wutke  to  Everyone : HINT: if your dependent y variable is categorical e.g. 1,2,3,4... with many categories, then RF could sometimes treat them as continuous. then you have to interpret the RF output accordingly 
-11:08:19 From  Martin Wutke  to  Everyone : @ Carina: depends on the library and the implementation. You have to check it in the documentary
-11:09:53 From  Mudashiru Akanji  to  Bright Enogieru Osatohanmwen(Direct Message) : guy howfar… abeg help me copy your libriesI no see all my own
-11:10:07 From  Carina Meyenberg  to  Everyone : Is the decision of each tree weighted by something?
-11:11:12 From  Martin Wutke  to  Everyone : all trees are taken into account. It is checked how many trees "vote" for a cetrain decision. The majority of a certain ddecision is chosen
-11:11:26 From  Carina Meyenberg  to  Everyone : Ok. Thanks
-11:15:50 From  Carina Meyenberg  to  Everyone : So what helps me the OOB in the end?
-11:15:56 From  Martin Wutke  to  Everyone : You have to differentiate  between the trainnig process and testing. During the training the oob error is used to train / construct the forest.  After that If you use your test data for testing your trained RF model you make a final decision based on the majority vote
-11:16:58 From  Maria Claire Reiß  to  Everyone : so the General  oob is a sum and not an average of all tree´s errors?
-11:18:14 From  Martin Wutke  to  Everyone : The oob error is calculated for each oob data set during training
-11:18:46 From  Martin Wutke  to  Everyone : you can aggreagte all oob errors 
-11:21:53 From  Bright Enogieru Osatohanmwen  to  Mudashiru Akanji(Direct Message) : library(ggplot2)library(gridExtra)library(FactoMineR)#pcrlibrary(factoextra)#pcrlibrary(animation)library(igraph)library(FactoInvestigate)library(e1071)library(tree)library(randomForest)library(neuralnet)
-11:22:07 From  Mudashiru Akanji  to  Bright Enogieru Osatohanmwen(Direct Message) : thanks man
-11:32:57 From  Carina Meyenberg  to  Everyone : Detail would be better
-11:33:47 From  mehmet  to  Everyone : ################
-11:33:48 From  mehmet  to  Everyone : 
-mydata = read.table("breast-cancer_shuffled.csv", header = TRUE, sep = ",", 
-                    stringsAsFactors = T)
-
-countTraining=round(0.7*nrow(mydata))
-randomRows=sample(1:nrow(mydata), size= countTraining, replace=F)
-dfTraining = mydata[randomRows,]
-dfTest = mydata[- randomRows,]
-11:34:59 From  Martin Wutke  to  Everyone : ####################
-11:35:03 From  Martin Wutke  to  Everyone : calcAccuracy = function(mtryParam, ntreeParam){  myForest = randomForest(type~., dfTraining, mtry = mtryParam, ntree = ntreeParam)  myPred = predict(myForest, dfTest, type = "class")  myTable = table(myPred, dfTest$type)  acc = (myTable[1,1]+myTable[2,2]) / nrow(dfTest)  return(acc)}
-11:40:08 From  Martin Wutke  to  Everyone : testNtree = function(mtryParam){  ntreeVec = seq(100, 1000, by=100)  accVec = c()  for(i in 1:length(ntreeVec)){    accVec[i] = calcAccuracy(mtryParam, ntreeVec[i])  }  maxIndex = which.max(accVec)  result = data.frame(ntree = ntreeVec[maxIndex], acc = accVec[maxIndex])  return(result)}
-11:42:10 From  Heiko Kromminga  to  Everyone : Why are we using "set.seed(42)" in the beginning of the script ?
-11:42:47 From  Heiko Kromminga  to  Everyone : same randomness?
-11:42:51 From  Selina Pusch  to  Everyone : So by using this function we get the Optimal number of trees to use (to get the highest accuracy) for the mtry-value, that we gave the function before, Right?
-11:43:21 From  Selina Pusch  to  Everyone : Ok, thanks!
-11:46:35 From  mehmet  to  Everyone : ############
-11:46:36 From  mehmet  to  Everyone : testMtry = function(){
-  mtryVec = c(2:9)
-  accVec = c()
-  ntreeVec = c()
-  for(i in 1:(length(mtryVec))){
-    result = testNtree(mtryVec[i])
-    accVec[i] = result$acc
-    ntreeVec[i] = result$ntree
-    cat(result$ntree, " ",mtryVec[i]," ",  result$acc,"\n")
-  }
-  maxIndex = which.max(accVec)
-  result = data.frame(ntree = ntreeVec[maxIndex], mtry = mtryVec[maxIndex], acc = accVec[maxIndex])
-  return(result)
-}
-11:53:02 From  Maria Claire Reiß  to  Everyone : but now testmtry only works with one data Frame? could we also give the data as Parameter?
-11:53:15 From  Martin Wutke  to  Everyone : sure
-11:53:27 From  Martin Wutke  to  Everyone : but this was just the example for this specific data
-11:55:47 From  Martin Wutke  to  Everyone : Hard to say what a best way is. This was just to show you how one way could look like
-11:56:08 From  Martin Wutke  to  Everyone : depends on how you define "best"
-11:57:07 From  Heiko Kromminga  to  Everyone : +
-11:57:23 From  Johanna Sophie Schlüter  to  Everyone : it is more clear now
-11:57:48 From  Manuel Goldkuhle  to  Everyone : is MCC more conservative than ACC or why shouldnt we just always use MCC?
-11:58:23 From  Manuel Goldkuhle  to  Everyone : yes, in the balanced case, what is the disadvantage of mcc over acc?
-11:58:28 From  Manuel Goldkuhle  to  Everyone : ok
-11:58:43 From  Martin Wutke  to  Everyone : I would say the majority of people simply knows the ACC more. But you could always use the MCC instead of ACC
-11:59:06 From  Manuel Goldkuhle  to  Everyone : thanks
-11:59:17 From  Martin Wutke  to  Everyone : if you only use the ACC you make yourself a target if you defend your analysis in cases your data is unbalanced
-12:00:06 From  Heiko Kromminga  to  Everyone : thank you
-12:00:26 From  Jonathan Heil  to  Everyone : it was not easy to write the code but it's understandable now
-12:01:56 From  Manuel Goldkuhle  to  Everyone : couldn't write the last code without a function since it is not used anywhere else?
-12:03:43 From  Manuel Goldkuhle  to  Everyone : martin answered thx
-13:06:41 From  Carina Meyenberg  to  Everyone : What would be the reason to choose single tree here?
-13:07:06 From  Manuel Goldkuhle  to  Everyone : can we chose which one to present or to you toss a coin as you said in the beginning of the course?
-13:07:51 From  Manuel Goldkuhle  to  Everyone : ok
-13:08:12 From  Md Rasheduzzaman  to  Everyone : Will ANN be in the exam?
-13:09:58 From  Johanna Sophie Schlüter  to  Everyone : do we choose any exercise or do we simply present the algorithm?
-13:10:13 From  Johanna Sophie Schlüter  to  Everyone : ok, thanks
-13:12:32 From  Maria Claire Reiß  to  Everyone : and the data? do we use the data that was also used in the exercise? or do we have to use data, that has not been used with a specific algorithm yet?
-13:21:44 From  Abdusaheed Olabisi Yusuf  to  Everyone : Whats the name of the file on StudIP please?
-13:22:04 From  Abdusaheed Olabisi Yusuf  to  Everyone : Ok Thanks
-13:22:36 From  mehmet  to  Everyone : ###########
-13:22:58 From  mehmet  to  Everyone : # Step 1: Read in both datasets and inspect the data
-# Step 2: If necessary, clean the data 
-# Step 3: identify a suitable identifier and merge the datasets 
-13:31:01 From  Manuel Goldkuhle  to  Everyone : done
-13:31:03 From  Heiko Kromminga  to  Everyone : yes
-13:31:06 From  Johanna Sophie Schlüter  to  Everyone : yes
-13:31:06 From  Jonathan Heil  to  Everyone : yes
-13:34:29 From  mehmet  to  Everyone : #############################
-13:34:31 From  mehmet  to  Everyone : # Step 1: Read in both datasets and inspect the data
-
-phenotypes <- read.table("phenotype_full.csv",header = TRUE, sep = ",")
-
-### To read anrds-file use readRDS
-### rds is the R-intern data format. It keeps the structure of an object while writing and reading the data 
-genotypes <- readRDS("genotype_sub.rds")
-
-
-##### Inspect the data
-
-dim(phenotypes)
-dim(genotypes)
-
-summary(phenotypes) # Data contains missing values -> requires data cleaning
-
-
-####################################################################################
-# Step 2: If necessary, clean the data 
-NA_vec <- sort(unique(which(is.na(phenotypes), arr.ind = TRUE)[,1]))
-# identify the unique row-names which contain missing values
-NA_vec
-phenotypes <- phenotypes[-NA_vec,] # remove the row with missing values
-
-### Check the genotpye data as well -> no NAs
-which(is.na(genotypes), arr.ind = TRUE)[,1]
-
-### Check the data dimension
-
-dim(phenotypes)
-dim(genotypes)
-
-head(genotypes[,1:5])
-head(phenotypes)
-13:37:16 From  Martin Wutke  to  Everyone : ##################################################################################### Step 3: identify a suitable identifier and merge the datasets ### Merge the data using the unique identifier "Individual.ID"all_data = merge(phenotypes, genotypes, by = "Individual.ID")
-13:41:25 From  Manuel Goldkuhle  to  Everyone : data.frames have an is.na method
-13:42:10 From  mehmet  to  Everyone : what do you mean
-13:42:37 From  Martin Wutke  to  Everyone : which(is.na(all_data), arr.ind = TRUE)
-13:42:43 From  Manuel Goldkuhle  to  Everyone : you can use is.na() with a data.frame without problem
-13:43:04 From  Manuel Goldkuhle  to  Everyone : sum(which(is.na(phenos)))
-13:45:50 From  Heiko Kromminga  to  Everyone : +
-13:45:51 From  Md Rasheduzzaman  to  Everyone : Yes...same dim
-13:45:53 From  Johanna Sophie Schlüter  to  Everyone : yes
-13:45:56 From  Jonathan Heil  to  Everyone : +
-13:45:57 From  Dámilólá Adekale  to  Everyone : Yes
-13:46:05 From  mehmet  to  Everyone : ### Merge the data using the unique identifier "Individual.ID"
-
-all_data = merge(phenotypes, genotypes, by = "Individual.ID")
-
-head(all_data[,1:15])
-dim(all_data)
-str(all_data) # define eggsize as a factor
-
-all_data$eggsize = as.factor(all_data$eggsize)
-
-13:46:55 From  mehmet  to  Everyone : ###########################
-13:46:57 From  mehmet  to  Everyone : ### Unsupervised learning
-# Step 4: Perform a PCA using only the genotypes to identify the important variables
-# Step 5: Using an importance threshold of 0.15 select all variables with a larger importance score
-# Step 6: Structural analysis: Perform kmeans and hierarchical clustering to learn more about the underlying data structure
-
-13:58:37 From  Dámilólá Adekale  to  Everyone : It seems to be really computationally demanding
-13:59:12 From  Johanna Sophie Schlüter  to  Everyone : sorry, rstudio decided to die
-13:59:43 From  Johanna Sophie Schlüter  to  Everyone : ok
-14:00:00 From  Johanna Sophie Schlüter  to  Everyone : yes, will do so
-14:03:32 From  Martin Wutke  to  Everyone : #############
-14:03:54 From  Abdusaheed Olabisi Yusuf  to  Everyone : The first genotype has 1063 observations
-14:03:57 From  Martin Wutke  to  Everyone : ##################################################################################### Step 4: Perform a PCA using only the genotypes to identify the important variablesgenotype_data = all_data[, 11: ncol(all_data)]res.pca = PCA(genotype_data, graph = TRUE, scale=T)# Total contribution on PC1 and PC2importance_plot = fviz_contrib(res.pca, choice = "var", axes = 1:2)importance_plot
-14:07:01 From  Manuel Goldkuhle  to  Everyone : with all samples it would take hours i think
-14:07:27 From  Manuel Goldkuhle  to  Everyone : oh sorry, that'sfor the eclust()
-14:08:02 From  mehmet  to  Everyone : #################
-14:08:04 From  mehmet  to  Everyone : randRows=sample(1: nrow(all_data), 250 )
-all_data_reduced=all_data[randRows,]
-14:10:35 From  Martin Wutke  to  Everyone : #####################
-14:10:52 From  Martin Wutke  to  Everyone : ##################################################################################### Step 5: Using an importance threshold of 0.15 select all variables with a larger importance scorecontributions=importance_plot$datacontributions=contributions[order(contributions$contrib,decreasing = T),]important_marker = contributions[which(contributions$contrib > 0.15),]importance_plot + geom_vline(xintercept = nrow(important_marker))
-14:14:30 From  Martin Wutke  to  Everyone : ### Select only the important variables together with EW36, eggsize and familyIDall_data_subset = all_data[,c("EW28","eggsize", "FamilyID",as.character(important_marker$name))]
-14:14:34 From  Dámilólá Adekale  to  Everyone : +
-14:19:07 From  Md Rasheduzzaman  to  Everyone : Would u mind sending the question?
-14:19:16 From  mehmet  to  Everyone : # Step 6: Structural analysis using eclust function: Perform kmeans  (k=4) and 
-#  hierarchical clustering (k=4) to learn more about the underlying data structure
-# Data set: all_data_subset
-14:21:33 From  Johanna Sophie Schlüter  to  Everyone : done (Baby data set used)
-14:22:17 From  Johanna Sophie Schlüter  to  Everyone : yes
-14:25:18 From  Dámilólá Adekale  to  Everyone : Done
-14:25:25 From  Heiko Kromminga  to  Everyone : done
-14:25:30 From  Johanna Sophie Schlüter  to  Everyone : done
-14:25:58 From  Martin Wutke  to  Everyone : ##################################################################################### Step 6: Structural analysis: Perform kmeans and hierarchical clustering to learn more about the underlying data structure## Kmeansgenotype_data_2 = all_data_subset[, 4:ncol(all_data_subset)]## Change the rownames to increase the interpretability  rownames(genotype_data_2) = paste(all_data_subset$FamilyID, 1:nrow(all_data_subset), sep = "_")res.km= eclust(genotype_data_2, "kmeans",k = 4) ## Visualize the clustering results using eggsize plot(all_data_subset$EW28, col = as.factor(all_data_subset$eggsize) )plot(all_data_subset$EW28, col = as.factor(res.km$cluster) )
-14:37:14 From  Heiko Kromminga  to  Everyone : +
-14:37:16 From  Johanna Sophie Schlüter  to  Everyone : got it
-14:38:38 From  Martin Wutke  to  Everyone : ## Hierarchical Clusteringres.hc <- eclust(genotype_data_2, "hclust", stand = T, k = 4) ## Visualization ## TAKES SOME TIME !!!fviz_dend(res.hc, rect=TRUE)# change the plot typefviz_dend(res.hc, rect=TRUE,  type="rectangle",horiz = T)fviz_dend(res.hc, rect=TRUE,  type="circular", cex = 0.75)fviz_dend(res.hc, rect=TRUE,  type="phylogenic")
-14:38:50 From  mehmet  to  Everyone : fviz_dend(res.hc, rect=TRUE,  type="phylogenic", phylo_layout="layout_as_tree")
-fviz_dend(res.hc, rect=TRUE,  type="phylogenic", phylo_layout="layout_with_drl")
-fviz_dend(res.hc, rect=TRUE,  type="phylogenic", phylo_layout="layout.gem")
-fviz_dend(res.hc, rect=TRUE,  type="phylogenic", phylo_layout="layout.mds")
-fviz_dend(res.hc, rect=TRUE,  type="phylogenic", phylo_layout="layout_with_lgl")
-14:39:41 From  Maria Claire Reiß  to  Everyone : the horizontal line in the dendogram is only given, because we provided k, Right?
-14:43:28 From  mehmet  to  Everyone : # Step 7: Shuffle the data (row-wise) to remove potential order effects
-# Data set: all_data_subset
-randomRows = sample(x = 1 : nrow(all_data_subset), size = nrow(all_data_subset), replace = FALSE)
-all_data_shuffled = all_data_subset[randomRows,]
-14:45:17 From  Martin Wutke  to  Everyone : never test on the trained data
-14:45:24 From  Martin Wutke  to  Everyone : almost never
-14:45:44 From  Dámilólá Adekale  to  Everyone : Done
-14:46:43 From  Martin Wutke  to  Everyone : the less data you have, the more likely to overfit the model
-14:50:07 From  Johanna Sophie Schlüter  to  Everyone : yes
-14:50:24 From  Martin Wutke  to  Everyone : ############################## Supervised learning ##################################################################################################################################################################################################################################################################################### Step 7: Shuffle the data (row-wise) to remove potential order effectsrandomRows = sample(x = 1 : nrow(all_data_subset), size = nrow(all_data_subset), replace = FALSE)all_data_shuffled = all_data_subset[randomRows,]##################################################################################### Step 8: Split the data in a training and a test set. Use 85% for training and 15% for testing training_set = all_data_shuffled[1: round(nrow(all_data_shuffled) * 0.85) ,  ]test_set =  all_data_shuffled[round(nrow(all_data_shuffled) * 0.85) : nrow(all_data_shuffled) , ]
-14:54:44 From  Dámilólá Adekale  to  Everyone : Done
-14:55:27 From  Md Rasheduzzaman  to  Everyone : Done
-14:55:46 From  Johanna Sophie Schlüter  to  Everyone : done
-14:56:00 From  Carina Meyenberg  to  Everyone : Done
-14:58:17 From  Martin Wutke  to  Everyone : ########
-14:58:18 From  Martin Wutke  to  Everyone : ##################################################################################### Step 9: Train a SVM-classifier based only on the genotypes to predict the eggsize. mySVM = svm(eggsize~., data = training_set[,-c(1,3)])##################################################################################### Step 10: Access the prediction performancepred_svm = predict(mySVM, test_set[,-c(1,3)])confTable = table(pred_svm,test_set$eggsize)confTabletrue_positiv = sum(diag(confTable))all_preds = sum(confTable)pred_perf = true_positiv / all_preds
-15:00:22 From  Heiko Kromminga  to  Everyone : training_set = all_data_shuffled[1: round(nrow(all_data_shuffled) * 0.85) ,  ]test_set =  all_data_shuffled[round(nrow(all_data_shuffled) * 0.85) : nrow(all_data_shuffled) , ]training_set$EW28 = as.factor(training_set$EW28)test_set$eggsize = as.factor(test_set$eggsize)svm = summary(eggsize~.,training_set)pred_svm = predict(svm, test_set[,-c(1,3)])
-15:03:21 From  Martin Wutke  to  Everyone : ##################################################################################### Step 11: Using a Random Forest (RF) approach and the merged data from the beginning,#          repeat the steps 7 + 8 only with 250 random observations and EW36 
-15:03:26 From  Martin Wutke  to  Everyone : randomRows = sample(x = 1 : nrow(all_data), size =250, replace = FALSE)all_data_shuffled_rf = all_data[randomRows,]
-15:04:47 From  Johanna Sophie Schlüter  to  Everyone : yes
-15:05:02 From  Maria Claire Reiß  to  Everyone : true
-15:05:24 From  Martin Wutke  to  Everyone : training_set_rf = all_data_shuffled_rf[1: round(nrow(all_data_shuffled_rf) * 0.7),  ]test_set_rf =  all_data_shuffled_rf[round(nrow(all_data_shuffled_rf) * 0.7) : nrow(all_data_shuffled_rf), ]
-15:05:54 From  Martin Wutke  to  Everyone : ##################################################################################### Step 12: With these new training and test sets, compute the variable importance using the RF approach
-15:06:18 From  Martin Wutke  to  Everyone : # with genotypes and mtry = 25
-15:10:41 From  Dámilólá Adekale  to  Everyone : +
-15:10:46 From  Johanna Sophie Schlüter  to  Everyone : done
-15:10:59 From  Maria Claire Reiß  to  Everyone : done
-15:11:26 From  Dámilólá Adekale  to  Everyone : plot(myForest, type="l", log = "y")
-15:14:02 From  Martin Wutke  to  Everyone : ###############
-15:14:03 From  Martin Wutke  to  Everyone : rf1 = randomForest(EW36~., data = all_data[randomRows,-c(1,2,3,4,6,7,8,9,10)], mtry=25)
-15:15:06 From  Martin Wutke  to  Everyone : #############
-15:16:43 From  Manuel Goldkuhle  to  Everyone : done
-15:16:47 From  Heiko Kromminga  to  Everyone : +
-15:16:54 From  Dámilólá Adekale  to  Everyone : +
-15:18:30 From  Carina Meyenberg  to  Everyone : Yes
-15:20:49 From  Martin Wutke  to  Everyone : important_snp = data.frame("importantanceScore" = rf1$importance)
-15:21:51 From  Martin Wutke  to  Everyone : important_snp = data.frame("importanceScore" = rf1$importance)important_snp$Names = rownames(important_snp)important_snp = important_snp[order(important_snp$IncNodePurity, decreasing = T),]
-15:24:33 From  Martin Wutke  to  Everyone : ##################################################################################### Step 13: Use the ordered important variables to train a new RF for incremental feature selection,#          to compute the optimal number of variables. For this train the RF to predict EW36 and start with most important variable.#          Stepwise increase the number of independent variables. #          Use the mean squared error and the correlation between the predicted value and the true EW36-value 
-15:28:12 From  mehmet  to  Everyone : break until 15:40
-15:49:54 From  Carina Meyenberg  to  Everyone : Can you please say again: How is the first SNP determined?
-15:50:25 From  Carina Meyenberg  to  Everyone : Ok. I see. Thanks!
-15:50:39 From  Asmita Shrestha  to  Everyone : what does red line in graph represents?
-15:52:02 From  mehmet  to  Everyone : # Step 13: Use the ordered important variables to train a new RF for incremental feature selection,
-#  to compute the optimal number of variables. 
-#  For this train the RF to predict EW36 and start with most important variable.
-#  Stepwise increase the number of independent variables. 
-#  Use the correlation between the predicted value and the true EW36-value 
-# dataset: training_set_rf / test_set_rf
-15:52:46 From  Carina Meyenberg  to  Everyone : For me it would be better to do it together...
-15:52:48 From  Dámilólá Adekale  to  Everyone : Let’s try. But 10 minutes is short
-15:55:11 From  Carina Meyenberg  to  Everyone : In general yes, but it is not easy for me to write the code...
-15:55:29 From  Manuel Goldkuhle  to  Everyone : done but it looks quite different from yours...
-15:56:29 From  Manuel Goldkuhle  to  Everyone : i'll try for a second
-15:56:41 From  Manuel Goldkuhle  to  Everyone : ah right
-15:59:56 From  Martin Wutke  to  Everyone : ############
-15:59:57 From  Martin Wutke  to  Everyone : cor_vec=c()
-16:07:08 From  Martin Wutke  to  Everyone : ###########
-16:07:09 From  Martin Wutke  to  Everyone : cor_vec=c()for(i in 1:10) {    ## Step-wise increase the number of Variables (= snp)  snp_names = c(as.character(important_snp$Name[1:i]))    ## Create a subset from the training set using EW36 and variables defined before  loop_data = subset(training_set_rf, select = c("EW36", snp_names) )  ## With teh subset, train a RF model  trained_rf <- randomForest(EW36~., loop_data)    ## Use teh trained RF model to make predictions for the test set  predictions = predict(trained_rf,test_set_rf)    ## Safe the ground truth and the predictions in a data frame  result_df = data.frame("True" =test_set_rf$EW36, "Predicted" = round(predictions,1))  ## Calculate the Spearman correlation between the ground truth and the predictions  correlation = cor(result_df$True, result_df$Predicted, method = "spearman")    ## Store the correlation value in a vector    cor_vec[i]=correlation    ## Use the sleep command to dynamically plot update the plot  Sys.sleep(0.1)    ## Plot the results and highlight t
-16:07:34 From  Martin Wutke  to  Everyone : I set the iteration number to 10, please change it accordingly
-16:08:34 From  Abdusaheed Olabisi Yusuf  to  Everyone : Can you send the script again please?
-16:08:45 From  Abdusaheed Olabisi Yusuf  to  Everyone : its not complete
-16:08:53 From  Asmita Shrestha  to  Everyone : script is not complete i guess
-16:09:08 From  mehmet  to  Everyone : ############################
-16:09:09 From  mehmet  to  Everyone : cor_vec=c()
-
-for(i in 1:50) {
-  snp_names = c(as.character(important_snp$Name[1:i]))
-  loop_data = subset(training_set_rf, select = c("EW36", snp_names) )
-  dim(loop_data)
-  trained_rf <- randomForest(EW36~., loop_data)
-  predictions = predict(trained_rf,test_set_rf)
-  result_df = data.frame("True" =test_set_rf$EW36, "Predicted" = round(predictions,1))
-  correlation = cor(result_df$True, result_df$Predicted, method = "spearman")
-  cor_vec[i]=correlation
-  Sys.sleep(0.2)
-  plot(seq_along(cor_vec),cor_vec, xlim = c(0,50), ylim = c(0,1))
-  abline(v=which(cor_vec==max(cor_vec)), col="red", lwd=3, lty=2 )
-  if(i<10){
-    cat(i, ":",snp_names ,":",  correlation , "\n" )
-  }
-} 
-16:26:21 From  Martin Wutke  to  Everyone : ### In summary: For the exam: Choose one method from the unsupervised area and one method from the supervised area. For each method, prepare a script. Randomly we will choose on method which you have to present. We tehn ask questions to the other method
-16:27:39 From  Martin Wutke  to  Everyone : also we ask more general questions for other area which was not selected for the presentation
-16:28:53 From  Martin Wutke  to  Everyone : but prepare a script in the way as you would analyze your own data
-16:28:59 From  Martin Wutke  to  Everyone : not just one line of code. 
